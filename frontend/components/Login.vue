@@ -8,9 +8,9 @@
                     </v-toolbar>
                     <v-card-text>
                         <v-form>
-                            <v-text-field name="email" label="Email" type="text" v-model="email">
+                            <v-text-field name="email" label="Email" type="text" v-model="email" :rules="[rules.emailMatch]">
                             </v-text-field>
-                            <v-text-field name="password" label="Password" type="password" v-model="password">
+                            <v-text-field name="password" label="Password" type="password" v-model="password" :rules="[rules.emailMatch]">
                             </v-text-field>
                         </v-form>
                     </v-card-text>
@@ -29,7 +29,10 @@ export default {
     data() {
         return {
             email: '',
-            password: ''
+            password: '',
+            rules: {
+                emailMatch: true
+            }
         }
     },
     methods: {
@@ -45,8 +48,10 @@ export default {
                 this.$auth.$storage.setUniversal('username', response.data.username)
                 // If no error is caught, set tokens to storage
                 await this.$auth.setUserToken(response.data.access_token, response.data.refresh_token)
+                // Remove errors
+                this.rules.emailMatch = true
             } catch (error) {
-                console.log(error.message)
+                this.rules.emailMatch = false
             }
         }
     }

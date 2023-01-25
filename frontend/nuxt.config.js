@@ -19,6 +19,7 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
+    '~/assets/css/app.css',
     '@fortawesome/fontawesome-svg-core/styles.css'
   ],
 
@@ -39,7 +40,8 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    '@nuxtjs/toast'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -73,13 +75,21 @@ export default {
           autoFetch: true
         },
         endpoints: {
-          login: { url: '/login', method: 'post'},
+          login: { url: '/users/login', method: 'post' },
           refresh: { url: '/token/refresh/', method: 'post' },
-          user: { url: '/user', method: 'get' },
-          logout: { url: '/logout', method: 'post'}
+          user: { url: '/users/user', method: 'get' },
+          logout: { url: '/logout', method: 'post' }
         },
       }
     }
+  },
+  //Toast
+  toast: {
+    position: 'top-center',
+    duration: 1300,
+    className: 'custom-toastr',
+    fitToScreen: true,
+    keepOnHover: true
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

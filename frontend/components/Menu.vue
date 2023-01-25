@@ -2,7 +2,7 @@
     <v-navigation-drawer absolute permanent app left class="custom-menu">
         <template v-slot:prepend>
             <div class="logo">
-                <img src="~/assets/logo.png">
+                <img src="~/assets/images/logo.png">
             </div>
             <div>
                 <div class="text-center welcome">
@@ -16,7 +16,7 @@
                         <img :src="$auth.user.avatar">
                     </div>
                     <div v-else>
-                        <img src="~/assets/default_user.png">
+                        <img src="~/assets/images/default_user.png">
                     </div>
                 </v-list-item-avatar>
                 <v-list-item-content>
@@ -41,13 +41,33 @@
         <v-divider></v-divider>
 
         <v-list dense>
-            <v-list-item v-for="item in items" :key="item.title" class="main-menu">
-                <NuxtLink :to="item.link">
+            <v-list-item class="main-menu">
+                <NuxtLink to="/">
                     <div class="menu-icon">
-                        <font-awesome-icon :icon="item.icon" />
+                        <font-awesome-icon icon="fa-solid fa-house" />
                     </div>
                     <v-list-item-content>
-                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                        <v-list-item-title>Home</v-list-item-title>
+                    </v-list-item-content>
+                </NuxtLink>
+            </v-list-item>
+            <v-list-item class="main-menu" v-if="$auth.loggedIn && $auth.user.type === 'Owner'">
+                <NuxtLink to="/structures">
+                    <div class="menu-icon">
+                        <font-awesome-icon icon="fa-solid fa-hotel" />
+                    </div>
+                    <v-list-item-content>
+                        <v-list-item-title>My Structures</v-list-item-title>
+                    </v-list-item-content>
+                </NuxtLink>
+            </v-list-item>
+            <v-list-item class="main-menu" v-if="$auth.loggedIn && $auth.user.type === 'Client'">
+                <NuxtLink to="/reservation">
+                    <div class="menu-icon">
+                        <font-awesome-icon icon="fa-solid fa-calendar-days" />
+                    </div>
+                    <v-list-item-content>
+                        <v-list-item-title>My Reservetion</v-list-item-title>
                     </v-list-item-content>
                 </NuxtLink>
             </v-list-item>
@@ -78,7 +98,6 @@ export default {
         }
     },
     mounted: function () {
-        console.log(this.$auth.user);
     }
 }
 </script>
@@ -119,12 +138,15 @@ export default {
     padding: 0 12px;
     vertical-align: bottom;
 }
-.main-menu a{
+
+.main-menu a {
     border-radius: 8px;
     width: 100%;
     display: flex;
 }
-.main-menu a:hover{
-    background-color: rgb(65 90 119 / 100%);;
+
+.main-menu a:hover {
+    background-color: rgb(65 90 119 / 100%);
+    ;
 }
 </style>

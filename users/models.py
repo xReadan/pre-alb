@@ -30,6 +30,7 @@ class User(AbstractUser, PermissionsMixin):
     username = models.CharField(max_length=25)
     password = models.CharField(max_length=25)
     avatar = models.TextField(null=True)
+    type = models.CharField(max_length=25, default='Client')
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)

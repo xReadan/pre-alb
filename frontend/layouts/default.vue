@@ -20,10 +20,9 @@ export default {
 #page {
     font-family: 'Quicksand';
 }
-
 .background-image {
     position: absolute;
-    background-image: url('~/assets/background.jpg');
+    background-image: url('~/assets/images/background.jpg');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

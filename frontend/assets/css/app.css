@@ -1,0 +1,9 @@
+.custom-toastr {
+    font-family: 'Quicksand';
+    font-weight: bold !important;
+}
+
+.v-application .primary {
+    background-color: #415A77 !important;
+    border-color: #778DA9 !important;
+}
