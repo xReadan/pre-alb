@@ -10,15 +10,17 @@
                         <v-data-table :headers="headers" :items="structures_list" :items-per-page="5"
                             class="elevation-1">
                             <template v-slot:item.manage="{ item }">
-                                <v-chip class="mr-2 manage-chip" @click="lights" color="success" outlined>
+                                <v-chip class="mr-2 manage-chip" @click="action('reservations', item.id)"
+                                    color="success" outlined>
                                     <font-awesome-icon icon="fa-solid fa-calendar-days" />
                                     &nbsp; Check Reservations
                                 </v-chip>
-                                <v-chip class="mr-2 manage-chip" @click="alarm" color="primary" outlined>
+                                <v-chip class="mr-2 manage-chip" @click="action('edit', item.id)" color="primary"
+                                    outlined>
                                     <font-awesome-icon icon="fa-solid fa-pen-to-square" />
                                     &nbsp; Edit Structure
                                 </v-chip>
-                                <v-chip class="manage-chip" @click="blinds" color="red" outlined>
+                                <v-chip class="manage-chip" @click="action('delete', item.id)" color="red" outlined>
                                     <font-awesome-icon icon="fa-solid fa-trash" />
                                     &nbsp; Delete
                                 </v-chip>
@@ -54,12 +56,42 @@ export default {
         await this.$axios.post('/structures/list', { id: this.$auth.user.id }).then(function (response) {
             _self.structures_list = response.data
         })
+    },
+    methods: {
+        action: function (type, id) {
+            var _self = this;
+            if (type == 'delete') {
+                this.$swal({
+                    title: 'Confirm Action',
+                    icon: 'warning',
+                    html: `Do you want to delete structure <b>#${id}</b>?`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                }).then(function (result) {
+                    if (result.isConfirmed && result.value) {
+                        _self.$axios.post('/structures/delete', {
+                            owner_id: _self.$auth.user.id,
+                            structure_id: id
+                        }).then(function (response) {
+                            _self.$fetch()
+                            _self.$swal({
+                                icon: 'success',
+                                title: 'Operation completed',
+                            })
+                        })
+                    }
+                });
+            } else {
+                this.$router.push(`/structures/${type}/${id}`)
+            }
+            console.log(type, id)
+        }
     }
 }
 </script>
 
 <style scoped>
-.manage-chip{
+.manage-chip {
     cursor: pointer;
 }
 </style>

@@ -41,7 +41,8 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     '@nuxtjs/auth-next',
-    '@nuxtjs/toast'
+    '@nuxtjs/toast',
+    "vue-sweetalert2/nuxt"
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -67,7 +68,7 @@ export default {
         refreshToken: {
           prefix: 'refresh_token.',
           property: 'refresh_token',
-          data: 'refresh_token',
+          data: 'refresh',
           maxAge: 60 * 60 * 24 * 15
         },
         user: {
