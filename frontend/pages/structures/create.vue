@@ -56,7 +56,8 @@ export default {
                 city: '',
                 address: '',
                 avatar: '',
-                number_of_rooms: ''
+                number_of_rooms: '',
+                image: ''
             },
         }
     },
@@ -94,7 +95,7 @@ export default {
             }).catch(function (e) {
                 var data = e.response.data;
                 for (var idx in data) {
-                    _self.errorMessages[idx] = data[idx]
+                    _self.errorMessages[idx] = data[idx][0]
                 }
             })
         }

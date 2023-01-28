@@ -1,12 +1,15 @@
 from django.shortcuts import render
 from .models import Structures
+from reservations.models import Reservations
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import StructureSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import JsonResponse
+from datetime import datetime
 from rest_framework import exceptions
+from django.db.models import Q
 
 class StructureView(CreateAPIView):
     queryset = Structures.objects.all()
@@ -68,3 +71,22 @@ def delete_structure(request):
     # Delete
     structure.delete()
     return Response("Structure deleted!")
+
+@api_view(['POST'])
+def search_structure(request):
+    location = request.data.get('location')
+    date_from = request.data.get('date_from')
+    date_to = request.data.get('date_to')
+    # Structure list
+    structure_list = []
+    # Get structure
+    structures = list(Structures.objects.filter(city__contains = location).values())
+    # Check reservation
+    for strucutre in structures:
+        check_reservation = Reservations.objects.filter(structure_id=strucutre['id']) \
+            .filter(Q(date_from__gte=date_from) | (Q(date_from__lt=date_from) & Q(date_to__lte=date_to))) \
+            .count()
+        if check_reservation < strucutre['rooms']:
+            structure_list.append(strucutre)
+    # Return
+    return JsonResponse(structure_list, safe=False)

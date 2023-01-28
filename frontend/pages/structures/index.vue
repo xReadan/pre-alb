@@ -70,7 +70,7 @@ export default {
                 }).then(function (result) {
                     if (result.isConfirmed && result.value) {
                         _self.$axios.post('/structures/delete', {
-                            owner_id: _self.$auth.user.id,
+                            user_id: _self.$auth.user.id,
                             structure_id: id
                         }).then(function (response) {
                             _self.$fetch()

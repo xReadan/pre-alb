@@ -61,7 +61,7 @@
                     </v-list-item-content>
                 </NuxtLink>
             </v-list-item>
-            <v-list-item class="main-menu" v-if="$auth.loggedIn && $auth.user.type === 'Client'">
+            <v-list-item class="main-menu" v-if="$auth.loggedIn">
                 <NuxtLink to="/reservation">
                     <div class="menu-icon">
                         <font-awesome-icon icon="fa-solid fa-calendar-days" />

@@ -2,42 +2,34 @@
   <v-container flluid>
     <v-layout align-center justify-center>
       <v-flex xs12 sm12 md12>
-        <v-card class="elevation-12">
-          <v-toolbar dark color="primary">
-            <v-toolbar-title>Select an awesome location for your next trip!</v-toolbar-title>
-          </v-toolbar>
+        <Search ref="searchBar"></Search>
+      </v-flex>
+    </v-layout>
+    <v-layout align-center justify-center mt-4 class="search-list" v-if="searched">
+      <v-flex xs12 sm12 md12>
+        <v-toolbar dark color="primary" class="search-list-header">
+          <v-toolbar-title>Structure found</v-toolbar-title>
+        </v-toolbar>
+        <v-card class="mx-8 my-12" max-width="374" v-for="structure in structures_found" :key="structure.id">
+          <v-img height="250" :src="structure.image"></v-img>
+          <v-card-title>{{ structure.name }}</v-card-title>
           <v-card-text>
-            <v-form>
-              <v-row class="custom-index-row">
-                <!-- Location -->
-                <v-flex xs12 sm12 md6>
-                  <v-text-field name="location" label="Where do you want to go?" type="text" v-model="location">
-                  </v-text-field>
-                </v-flex>
-                <!-- From -->
-                <v-flex xs12 sm12 md3>
-                  <v-menu v-model="menu_from" :close-on-content-click="false" :nudge-right="40"
-                    transition="scale-transition" offset-y min-width="auto">
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field v-model="date_from" label="From" prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                        v-on="on"></v-text-field>
-                    </template>
-                    <v-date-picker v-model="date_from" @input="menu_from = false" :min="min_date"></v-date-picker>
-                  </v-menu>
-                </v-flex>
-                <!-- To -->
-                <v-flex xs12 sm12 md3>
-                  <v-menu v-model="menu_to" :close-on-content-click="false" :nudge-right="40"
-                    transition="scale-transition" offset-y min-width="auto">
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field v-model="date_to" label="To" prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                        v-on="on"></v-text-field>
-                    </template>
-                    <v-date-picker v-model="date_to" @input="menu_to = false" :min="min_date"></v-date-picker>
-                  </v-menu>
-                </v-flex>
-              </v-row>
-            </v-form>
+            <div class="my-4 text-subtitle-1">
+              {{ structure.city }} - {{ structure.address }}
+            </div>
+            <!-- <div>Description</div> -->
+          </v-card-text>
+          <v-divider class="mx-4"></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="reserve(structure.id)">
+              Reserve
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+        <v-card v-if="structures_found.length == 0">
+          <v-card-text class="not-found-card">
+            No structures found for the selected location and dates
           </v-card-text>
         </v-card>
       </v-flex>
@@ -50,25 +42,72 @@ export default {
   name: 'IndexPage',
   data() {
     return {
-      menu_from: '',
-      location: '',
-      menu_from: '',
-      date_from: '',
-      menu_to: '',
-      date_to: '',
-      min_date: (new Date).toISOString().split('T')[0]
+      searched: false,
+      structures_found: [],
+      selected_params: {}
     }
   },
-  mounted () {
-    console.log(Date.now())
+  methods: {
+    resetErrors() {
+      for (var idx in this.errorMessages) {
+        this.errorMessages[idx] = ''
+      }
+    },
+    async fetchStructures(params) {
+      var _self = this;
+      await this.$axios.post('/structures/search', params).then(function (response) {
+        _self.structures_found = response.data
+      }).catch(function (e) {
+        _self.$toast.error("Something went wrong")
+      })
+    },
+    async reserve(structure_id) {
+      var _self = this;
+      // User must be logged in to reserve
+      if (!this.$auth.loggedIn) {
+        this.$toast.error("You must login or create an account before make a reservation!", { duration: 3000 })
+        this.$router.push('/login');
+      } else {
+        var params = {
+          structure: structure_id,
+          user: this.$auth.user.id,
+          date_from: this.selected_params.date_from,
+          date_to: this.selected_params.date_to,
+        }
+        await this.$axios.post('/reservations/create', params).then(function (response) {
+          _self.$toast.success("Reservation requested!", { duration: 2000 })
+          _self.$router.push('/reservation');
+        }).catch(function (e) {
+          _self.$toast.error("Something went wrong")
+        })
+      }
+    }
+  },
+  mounted() {
+    this.$nextTick(function () {
+      var _self = this
+      this.$refs.searchBar.$on('search', function (params) {
+        _self.resetErrors()
+        _self.searched = true;
+        _self.selected_params = params
+        _self.fetchStructures(params)
+      })
+    })
   }
 }
 </script>
 <style scoped>
-.custom-index-row {
-  padding: 0 18px;
+.search-list {
+  background-color: white;
+  border-radius: 4px;
 }
-.custom-index-row .flex {
-  padding: 0 12px;
+
+.search-list-header {
+  border-radius: 4px 4px 0 0;
+}
+
+.not-found-card {
+  padding: 64px;
+  text-align: center;
 }
 </style>
