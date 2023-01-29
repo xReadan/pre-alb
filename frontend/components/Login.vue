@@ -15,6 +15,7 @@
                         </v-form>
                     </v-card-text>
                     <v-card-actions>
+                        <div class="register-prompt mx-2">Click <NuxtLink to="/signup">here</NuxtLink> if you don't have an account</div>
                         <v-spacer></v-spacer>
                         <v-btn color="primary" @click="loginHandler">Login</v-btn>
                     </v-card-actions>
@@ -59,5 +60,7 @@ export default {
 </script>
 
 <style scoped>
-
+.register-prompt{
+    font-size: 12px;
+}
 </style>

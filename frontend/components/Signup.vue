@@ -17,6 +17,8 @@
                             <v-text-field name="password" label="Password" type="password" v-model="user.password"
                                 hint="At least 8 characters" :error-messages="errorMessages.password">
                             </v-text-field>
+                            <v-select :items="items" label="Account type" v-model="user.type"
+                                :error-messages="errorMessages.type"></v-select>
                         </v-form>
                     </v-card-text>
                     <v-card-actions>
@@ -33,15 +35,18 @@
 export default {
     data() {
         return {
+            items: ["Client", "Owner"],
             user: {
                 username: '',
                 email: '',
                 password: '',
+                type: ''
             },
             errorMessages: {
                 username: '',
                 email: '',
                 password: '',
+                type: ''
             },
         }
     },
