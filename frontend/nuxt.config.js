@@ -79,7 +79,7 @@ export default {
           login: { url: '/users/login', method: 'post' },
           refresh: { url: '/token/refresh/', method: 'post' },
           user: { url: '/users/user', method: 'get' },
-          logout: { url: '/logout', method: 'post' }
+          logout: { url: '/users/logout', method: 'post' }
         },
       }
     }

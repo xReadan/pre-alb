@@ -62,11 +62,11 @@ def update_structure(request):
 
 @api_view(['POST'])
 def delete_structure(request):
-    user_id = request.data.get('owner_id')
+    owner_id = request.data.get('owner_id')
     structure_id = request.data.get('structure_id')
     # Get structure
     structure = Structures.objects.filter(id = structure_id).first()
-    if not structure or structure.owner_id is not user_id:
+    if not structure or structure.owner_id is not owner_id:
         raise exceptions.PermissionDenied("Somethings went wrong")
     # Delete
     structure.delete()

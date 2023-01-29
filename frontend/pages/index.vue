@@ -48,11 +48,6 @@ export default {
     }
   },
   methods: {
-    resetErrors() {
-      for (var idx in this.errorMessages) {
-        this.errorMessages[idx] = ''
-      }
-    },
     async fetchStructures(params) {
       var _self = this;
       await this.$axios.post('/structures/search', params).then(function (response) {
@@ -87,7 +82,6 @@ export default {
     this.$nextTick(function () {
       var _self = this
       this.$refs.searchBar.$on('search', function (params) {
-        _self.resetErrors()
         _self.searched = true;
         _self.selected_params = params
         _self.fetchStructures(params)

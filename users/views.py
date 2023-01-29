@@ -1,9 +1,8 @@
-from django.shortcuts import render
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, logout
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import RegisterUserSerializer, UserSerializer
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import exceptions
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -37,6 +36,11 @@ def login(request):
         'username': user.username
     }
     return response
+
+@api_view(['POST'])
+def user_logout(request):
+    logout(request)
+    return Response("Logged out!")
 
 class CurrentLoggedInUser(ModelViewSet):
     queryset = get_user_model().objects.all()

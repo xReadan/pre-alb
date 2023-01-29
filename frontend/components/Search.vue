@@ -19,7 +19,8 @@
                                 transition="scale-transition" offset-y min-width="auto">
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-text-field v-model="params.date_from" label="From" prepend-icon="mdi-calendar"
-                                        readonly v-bind="attrs" v-on="on" :error-messages="errorMessages.date_from"></v-text-field>
+                                        readonly v-bind="attrs" v-on="on"
+                                        :error-messages="errorMessages.date_from"></v-text-field>
                                 </template>
                                 <v-date-picker v-model="params.date_from" @input="menu_from = false"
                                     :min="min_date"></v-date-picker>
@@ -31,7 +32,8 @@
                                 transition="scale-transition" offset-y min-width="auto">
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-text-field v-model="params.date_to" label="To" prepend-icon="mdi-calendar"
-                                        readonly v-bind="attrs" v-on="on" :error-messages="errorMessages.date_to"></v-text-field>
+                                        readonly v-bind="attrs" v-on="on"
+                                        :error-messages="errorMessages.date_to"></v-text-field>
                                 </template>
                                 <v-date-picker v-model="params.date_to" @input="menu_to = false"
                                     :min="min_date"></v-date-picker>
@@ -68,6 +70,11 @@ export default {
         }
     },
     methods: {
+        resetErrors() {
+            for (var idx in this.errorMessages) {
+                this.errorMessages[idx] = ''
+            }
+        },
         validate_form() {
             var passed = true
             // Check location
@@ -91,7 +98,11 @@ export default {
             return passed
         },
         search() {
-            if(!this.validate_form()) return
+            // Reset errors
+            this.resetErrors()
+            // Validate form
+            if (!this.validate_form()) return
+            // Send params to parent
             var params = {
                 location: this.params.location,
                 date_from: this.params.date_from,
