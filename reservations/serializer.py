@@ -5,7 +5,7 @@ from rest_framework import serializers
 class ReservationseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservations
-        fields = ('user', 'structure', 'date_from', 'date_to')
+        fields = ('user', 'structure', 'room', 'date_from', 'date_to')
 
     def create(self, validated_data):
         return Reservations.objects.create(**validated_data)

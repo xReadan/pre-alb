@@ -4,7 +4,7 @@
             <v-flex xs12 sm12 md12>
                 <v-card class="elevation-4">
                     <v-toolbar dark color="primary">
-                        <v-toolbar-title>Your Structures</v-toolbar-title>
+                        <v-toolbar-title>My Structures</v-toolbar-title>
                     </v-toolbar>
                     <v-card-text>
                         <v-data-table :headers="headers" :items="structures_list" :items-per-page="5"
@@ -84,7 +84,6 @@ export default {
             } else {
                 this.$router.push(`/structures/${type}/${id}`)
             }
-            console.log(type, id)
         }
     }
 }

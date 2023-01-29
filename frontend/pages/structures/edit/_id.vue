@@ -1,7 +1,7 @@
 <template>
     <v-container flluid>
         <v-layout align-center justify-center>
-            <v-flex xs12 sm8 md6>
+            <v-flex xs12 sm8 md6 class="mx-4">
                 <v-card class="elevation-12 structure-card">
                     <v-toolbar dark color="primary">
                         <v-toolbar-title>{{ structure.name }}</v-toolbar-title>
@@ -62,6 +62,31 @@
                     </v-card-actions>
                 </v-card>
             </v-flex>
+            <v-flex xs12 sm8 md6 class="mx-4">
+                <v-card class="elevation-12 structure-card">
+                    <v-toolbar dark color="primary">
+                        <v-toolbar-title>Rooms</v-toolbar-title>
+                    </v-toolbar>
+                    <v-card-text>
+                        <v-data-table :headers="headers" :items="rooms" :items-per-page="5"
+                            class="elevation-1">
+                            <template v-slot:item.manage="{ item }">
+                                <v-chip class="mr-2 manage-chip" @click="$router.push('/rooms/edit/' + item.id)" color="primary"
+                                    outlined>
+                                    <font-awesome-icon icon="fa-solid fa-pen-to-square" />
+                                </v-chip>
+                                <v-chip class="manage-chip" @click="deleteRoom(item)" color="red" outlined>
+                                    <font-awesome-icon icon="fa-solid fa-trash" />
+                                </v-chip>
+                            </template>
+                        </v-data-table>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="primary" @click="$router.push('/rooms/create/' + $route.params.id)">Add room</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-flex>
         </v-layout>
     </v-container>
 </template>
@@ -87,6 +112,12 @@ export default {
                 pool: false,
                 spa: false
             },
+            headers: [
+                { text: 'ID', value: 'id' },
+                { text: 'Name', value: 'name', sortable: 0, align: 'center' },
+                { text: 'Price (€)', value: 'price', sortable: 1, align: 'center' },
+                { text: 'Manage', value: 'manage', sortable: 0, align: 'center' }
+            ],
             errorMessages: {
                 name: '',
                 city: '',
@@ -95,15 +126,24 @@ export default {
                 number_of_rooms: '',
                 description: ''
             },
+            rooms: [],
         }
     },
     async fetch() {
         var _self = this;
+        // Fetch structure info
         await this.$axios.post('/structures/structure', {
             owner_id: this.$auth.user.id,
             structure_id: parseInt(this.$route.params.id)
         }).then(function (response) {
             _self.structure = response.data
+        })
+        // Fetch rooms
+        await this.$axios.post('/rooms/list', {
+            owner_id: this.$auth.user.id,
+            structure_id: parseInt(this.$route.params.id)
+        }).then(function (response) {
+            _self.rooms = response.data
         })
     },
     methods: {
@@ -138,6 +178,30 @@ export default {
             }).catch(function (e) {
                 _self.$toast.success('Something went wrong!')
             })
+        },
+        deleteRoom (room) {
+            var _self = this;
+            this.$swal({
+                    title: 'Confirm Action',
+                    icon: 'warning',
+                    html: `Do you want to delete the <b>${room.name}</b> room?`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                }).then(function (result) {
+                    if (result.isConfirmed && result.value) {
+                        _self.$axios.post('/rooms/delete', {
+                            owner_id: _self.$auth.user.id,
+                            structure_id: room.structure_id,
+                            room_id: room.id
+                        }).then(function (response) {
+                            _self.$fetch()
+                            _self.$swal({
+                                icon: 'success',
+                                title: 'Operation completed',
+                            })
+                        })
+                    }
+                });
         }
     }
 }

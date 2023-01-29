@@ -4,7 +4,7 @@
             <v-flex xs12 sm12 md12>
                 <v-card class="elevation-4">
                     <v-toolbar dark color="primary">
-                        <v-toolbar-title>Your Structures</v-toolbar-title>
+                        <v-toolbar-title>My Reservations</v-toolbar-title>
                     </v-toolbar>
                     <v-card-text>
                         <v-data-table :headers="headers" :items="reservaton_list" :items-per-page="5"
@@ -32,6 +32,7 @@ export default {
             headers: [
                 { text: 'ID', value: 'id' },
                 { text: 'Structure', value: 'structure', sortable: 0, align: 'center' },
+                { text: 'Room', value: 'room', sortable: 0, align: 'center' },
                 { text: 'Address', value: 'address', sortable: 0, align: 'center' },
                 { text: 'Period', value: 'period', sortable: 0, align: 'center' },
                 { text: 'Manage', value: 'manage', sortable: 0, align: 'center' }
@@ -51,7 +52,7 @@ export default {
             this.$swal({
                 title: 'Confirm Action',
                 icon: 'warning',
-                html: `Do you want to delete the following reservation><br><br>Structure<br><b>${reservation.structure}</b><br>Period<br><b>${reservation.period}<b>`,
+                html: `Do you want to delete the following reservation?<br><br>Structure<br><b>${reservation.structure}</b><br>Room<br><b>${reservation.room}</b><br>Period<br><b>${reservation.period}<b>`,
                 showCancelButton: true,
                 confirmButtonText: 'Delete',
             }).then(function (result) {

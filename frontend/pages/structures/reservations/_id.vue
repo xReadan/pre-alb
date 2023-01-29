@@ -35,6 +35,7 @@ export default {
             headers: [
                 { text: 'ID', value: 'id' },
                 { text: 'User', value: 'user', sortable: 0, align: 'center' },
+                { text: 'Room', value: 'room', sortable: 0, align: 'center' },
                 { text: 'Period', value: 'period', sortable: 0, align: 'center' },
                 { text: 'Manage', value: 'manage', sortable: 0, align: 'center' }
             ],

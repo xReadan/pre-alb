@@ -71,34 +71,51 @@
                     </v-list-item-content>
                 </NuxtLink>
             </v-list-item>
+            <v-list-item class="main-menu" v-if="$auth.loggedIn">
+                <NuxtLink to="/notifications">
+                    <div class="menu-icon">
+                        <font-awesome-icon icon="fa-solid fa-triangle-exclamation"  class="new-notification" v-if="new_notifications"/>
+                        <font-awesome-icon icon="fa-solid fa-message" />
+                    </div>
+                    <v-list-item-content>
+                        <v-list-item-title>Notifications</v-list-item-title>
+                    </v-list-item-content>
+                </NuxtLink>
+            </v-list-item>
         </v-list>
     </v-navigation-drawer>
 </template>
 
 <script>
 export default {
+    name: 'Menu',
     data() {
         return {
-            items: [
-                {
-                    title: 'Home',
-                    icon: 'fa-solid fa-house',
-                    link: '/'
-                },
-            ]
+            new_notifications: false
+        }
+    },
+    watch: {
+        '$auth.loggedIn': function(val) {
+            if(val) {
+                this.$fetch()
+            }
+        }
+    },
+    async fetch() {
+        if (this.$auth.loggedIn) {
+            var _self = this
+            await this.$axios.post('/notifications/check', { user_id: this.$auth.user.id }).then(function (response) {
+                _self.new_notifications = response.data
+            })
         }
     },
     methods: {
         async logout() {
             try {
                 await this.$auth.logout();
-            } catch (error) {
-                console.log(error.message)
-            }
+            } catch (error) { }
         }
     },
-    mounted: function () {
-    }
 }
 </script>
 
@@ -148,5 +165,13 @@ export default {
 .main-menu a:hover {
     background-color: rgb(65 90 119 / 100%);
     ;
+}
+.new-notification{
+    color: red;
+    padding: 0 !important;
+    font-size: 12px;
+    position: absolute;
+    top: 7px;
+    left: 35px;
 }
 </style>

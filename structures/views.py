@@ -7,7 +7,7 @@ from .serializers import StructureSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import JsonResponse
-from datetime import datetime
+from rooms.models import StructureRooms
 from rest_framework import exceptions
 from django.db.models import Q
 
@@ -24,12 +24,9 @@ def get_structures_list(request):
 
 @api_view(['POST'])
 def get_structure(request):
-    user_id = request.data.get('owner_id')
     structure_id = request.data.get('structure_id')
     # Get structure
     structure = Structures.objects.filter(id = structure_id).values().first()
-    if structure['owner_id'] is not user_id:
-        raise exceptions.PermissionDenied("Somethings went wrong")
     return JsonResponse(structure, safe=False)
 
 @api_view(['POST'])
@@ -95,6 +92,14 @@ def search_structure(request):
             .filter(Q(date_from__gte=date_from) | (Q(date_from__lt=date_from) & Q(date_to__lte=date_to))) \
             .count()
         if check_reservation < strucutre['rooms']:
+            strucutre['available'] = True
+        else:
+            strucutre['available'] = False
+        # Get starting price
+        room_min_price = StructureRooms.objects.filter(structure_id=strucutre['id']).order_by('price').first()
+        # If this query does not return anything, the structure has no rooms so cant be booked
+        if room_min_price:
+            strucutre['min_price'] = room_min_price.price
             structure_list.append(strucutre)
     # Return
     return JsonResponse(structure_list, safe=False)

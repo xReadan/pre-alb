@@ -1,10 +1,10 @@
 <template>
     <v-app id="page">
         <div class="background-image"></div>
-        <Menu />
+        <Menu ref="menu"/>
         <v-main>
             <v-container fill-height>
-                <Nuxt />
+                <Nuxt ref="container"/>
             </v-container>
         </v-main>
     </v-app>
@@ -12,7 +12,12 @@
 
 <script>
 export default {
-
+    mounted: function () {
+        var _self = this
+        this.$refs.container.$on('notificationsFetched', function() {
+            console.log("here");
+        })
+    }
 }
 </script>
 
