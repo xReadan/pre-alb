@@ -8,4 +8,4 @@ class StructureSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Structures
-        fields = ('name', 'city', 'address', 'rooms', 'image', 'owner', 'id')
+        fields = ('name', 'city', 'address', 'rooms', 'image', 'owner', 'id', 'description', 'restaurants', 'pool', 'spa')

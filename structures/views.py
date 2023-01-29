@@ -56,6 +56,14 @@ def update_structure(request):
     image = request.data.get('image')
     if city:
         structure.image = image
+    # Check description
+    description = request.data.get('description')
+    if description:
+        structure.description = description
+    # Services
+    structure.restaurants = request.data.get('restaurants')
+    structure.pool = request.data.get('pool')
+    structure.spa = request.data.get('spa')
     # Save
     structure.save()
     return Response(f"{structure.name} updated")

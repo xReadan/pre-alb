@@ -2,7 +2,7 @@
     <v-container flluid>
         <v-layout align-center justify-center>
             <v-flex xs12 sm8 md6>
-                <v-card class="elevation-12">
+                <v-card class="elevation-12 structure-card">
                     <v-toolbar dark color="primary">
                         <v-toolbar-title>{{ structure.name }}</v-toolbar-title>
                     </v-toolbar>
@@ -16,6 +16,7 @@
                             </div>
                         </div>
                         <v-form>
+                            <h1>Basic informations</h1>
                             <v-file-input :rules="rules" accept="image/png, image/jpeg, image/bmp"
                                 placeholder="Pick an image" prepend-icon="mdi-camera" label="Image"
                                 :error-messages="errorMessages.image" @change="filesChange">
@@ -32,6 +33,25 @@
                             <v-text-field name="rooms" label="Number of Rooms" type="number" v-model="structure.rooms"
                                 :error-messages="errorMessages.rooms">
                             </v-text-field>
+                            <v-textarea auto-grow label="Description" rows="4" row-height="20"
+                                v-model="structure.description"></v-textarea>
+                        </v-form>
+                        <v-form>
+                            <h1>Services</h1>
+                            <v-row>
+                                <v-col cols="12" sm="4" md="4">
+                                    <v-checkbox v-model="structure.restaurants" label="Restaurant" color="success"
+                                        hide-details></v-checkbox>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4">
+                                    <v-checkbox v-model="structure.pool" label="Swimming pool" color="success"
+                                        hide-details></v-checkbox>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4">
+                                    <v-checkbox v-model="structure.spa" label="SPA" color="success"
+                                        hide-details></v-checkbox>
+                                </v-col>
+                            </v-row>
                         </v-form>
                     </v-card-text>
                     <v-card-actions>
@@ -61,14 +81,19 @@ export default {
                 city: '',
                 address: '',
                 image: '',
-                rooms: ''
+                rooms: '',
+                description: '',
+                restaurants: false,
+                pool: false,
+                spa: false
             },
             errorMessages: {
                 name: '',
                 city: '',
                 address: '',
                 image: '',
-                number_of_rooms: ''
+                number_of_rooms: '',
+                description: ''
             },
         }
     },
@@ -133,5 +158,9 @@ export default {
     max-width: 100%;
     max-height: 300px;
     border-radius: 12px;
+}
+
+.structure-card h1 {
+    text-align: center;
 }
 </style>

@@ -10,23 +10,49 @@
         <v-toolbar dark color="primary" class="search-list-header">
           <v-toolbar-title>Structure found</v-toolbar-title>
         </v-toolbar>
-        <v-card class="mx-8 my-12" max-width="374" v-for="structure in structures_found" :key="structure.id">
-          <v-img height="250" :src="structure.image"></v-img>
-          <v-card-title>{{ structure.name }}</v-card-title>
-          <v-card-text>
-            <div class="my-4 text-subtitle-1">
-              {{ structure.city }} - {{ structure.address }}
-            </div>
-            <!-- <div>Description</div> -->
-          </v-card-text>
-          <v-divider class="mx-4"></v-divider>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="reserve(structure.id)">
-              Reserve
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+        <div class="mx-8">
+          <v-row class="filter-row">
+            <v-col cols="12" sm="12" md="12" class="header-row">
+              <h2>Filters</h2>
+            </v-col>
+            <v-col cols="12" sm="4" md="2">
+              <v-checkbox v-model="filter.restaurants" label="Restaurant" color="success" hide-details></v-checkbox>
+            </v-col>
+            <v-col cols="12" sm="4" md="2">
+              <v-checkbox v-model="filter.pool" label="Swimming pool" color="success" hide-details></v-checkbox>
+            </v-col>
+            <v-col cols="12" sm="4" md="2">
+              <v-checkbox v-model="filter.spa" label="SPA" color="success" hide-details></v-checkbox>
+            </v-col>
+          </v-row>
+          <v-divider class="my-4"></v-divider>
+          <v-row>
+            <v-col cols="12" sm="4" md="4" v-for="structure in displayed_structure" :key="structure.id">
+              <v-card class="my-4" max-width="374">
+                <v-img height="250" :src="structure.image"></v-img>
+                <v-card-title>{{ structure.name }}</v-card-title>
+                <v-card-text>
+                  <div class="my-4 text-subtitle-1">
+                    {{ structure.city }} - {{ structure.address }}
+                  </div>
+                  <div>{{ structure.description }}</div>
+                </v-card-text>
+                <v-divider class="mx-4"></v-divider>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" text @click="reserve(structure.id)">
+                    Reserve
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-row v-if="displayed_structure.length == 0">
+            <v-card-text class="not-found-card">
+              No structures found with the selected criteria
+            </v-card-text>
+          </v-row>
+        </div>
         <v-card v-if="structures_found.length == 0">
           <v-card-text class="not-found-card">
             No structures found for the selected location and dates
@@ -44,7 +70,36 @@ export default {
     return {
       searched: false,
       structures_found: [],
-      selected_params: {}
+      displayed_structure: [],
+      selected_params: {},
+      filter: {
+        restaurants: false,
+        pool: false,
+        spa: false
+      },
+    }
+  },
+  watch: {
+    filter: {
+      deep: true,
+      handler(val) {
+        // Create filter obj
+        var filter_obj = {}
+        var filters_active = false
+        for (var idx in val) {
+          if (val[idx]) {
+            filters_active = true
+            filter_obj[idx] = true
+          }
+        }
+        // If filters are active, filter
+        if (filters_active) {
+          var structures_filtered = this.$_.where(this.structures_found, filter_obj)
+          this.$set(this, 'displayed_structure', structures_filtered)
+        } else {
+          this.$set(this, 'displayed_structure', this.structures_found)
+        }
+      }
     }
   },
   methods: {
@@ -52,6 +107,7 @@ export default {
       var _self = this;
       await this.$axios.post('/structures/search', params).then(function (response) {
         _self.structures_found = response.data
+        _self.displayed_structure = response.data
       }).catch(function (e) {
         _self.$toast.error("Something went wrong")
       })
@@ -98,6 +154,16 @@ export default {
 
 .search-list-header {
   border-radius: 4px 4px 0 0;
+}
+
+.filter-row .header-row {
+  color: #778DA9;
+  padding-top: 16px !important;
+  padding-bottom: 0 !important;
+}
+
+.filter-row .v-input {
+  margin-top: 0 !important;
 }
 
 .not-found-card {
